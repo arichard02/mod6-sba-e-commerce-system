@@ -1,41 +1,62 @@
-// Develop Product Class:
+import { calculateDiscount } from "../utils/DiscountCalculator";
+import { calculateTax } from "../utils/TaxCalculator";
 
-// Product Base Class (Product.ts):
-// Define a Product class that includes the appropriate properties 
-// based on data provided in the API response.
-// Include methods displayDetails() and getPriceWithDiscount(), 
-// and implement them appropriately based on the provided data.
+export class Product {
+  public id: number;
+  public sku: string;
+  public title: string;
+  public description: string;
+  public price: number;
+  public discountPercentage: number;
+  public category: string;
 
-
-export
-
-
-class Product {
-    id: number;
-    title: string;
-    decription: string;
-    catagory: string;
-    price: number;
-
-    constructor(id: number, title: string, description: string, category: string, price: number) {
-        this.id = id;
-        this.title = title;
-        this.decription = description;
-        this.catagory = category;
-        this.price = price;
-    }
-
-      displayDetails(): string {
-        return `The product id : ${this.id} , The product title is : ${this.title} , the product price is : ${this.price}`;
+  constructor(
+    id: number,
+    sku: string,
+    title: string,
+    description: string,
+    price: number,
+    discountPercentage: number,
+    category: string
+  ) {
+    this.id = id;
+    this.sku = sku;
+    this.title = title;
+    this.description = description;
+    this.price = price;
+    this.discountPercentage = discountPercentage;
+    this.category = category;
   }
 
-  
+  getPriceWithDiscount(): number {
+    const discountAmount = calculateDiscount(
+      this.price,
+      this.discountPercentage
+    );
+    return this.price - discountAmount;
+  }
 
-  getPriceWithTax(): number {
-    const taxAmount = this.price * 0.2;
-    const totalPrice = this.price + taxAmount;
-    return totalPrice;
+  getTaxAmount(): number {
+    return calculateTax(
+      this.getPriceWithDiscount(),
+      this.category
+    );
+  }
+
+  displayDetails(): void {
+    console.log("---------------");
+    console.log(`Product: ${this.title}`);
+    console.log(`Category: ${this.category}`);
+    console.log(`Original Price: $${this.price.toFixed(2)}`);
+    console.log(`Discount: ${this.discountPercentage}%`);
+    console.log(
+      `Price After Discount: $${this.getPriceWithDiscount().toFixed(2)}`
+    );
+    console.log(`Tax: $${this.getTaxAmount().toFixed(2)}`);
+    console.log(
+      `Final Price: $${(
+        this.getPriceWithDiscount() + this.getTaxAmount()
+      ).toFixed(2)}`
+    );
   }
 }
-
-const productInstance = new Product(1, "Sample Product", "This is a sample product description.", "Sample Category", 100);
